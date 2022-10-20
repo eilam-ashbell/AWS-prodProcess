@@ -71,8 +71,8 @@ sudo apt-get install -y nodejs
 NGINX is a service that acts as a web server and a reverse proxy. We opened port 80 for HTTP requests to enter from the web. Given that there is only one incoming port (80) but 2 services (frontend and backend), a reverse proxy acts as an abstraction to direct requests to 2 different ports (3000 for frontend and 8081 for backend in this example).
 
 ```
-sudo apt install -y NGINX
-sudo systemctl enable NGINX
+sudo apt install -y nginx
+sudo systemctl enable nginx
 ```
 
 NGINX should've started automatic.
@@ -80,17 +80,17 @@ NGINX should've started automatic.
 Check it by:
 
 ```
-service NGINX status
+service nginx status
 ```
 
 If NGINX not started, you can run
 
 ```
-sudo systemctl start NGINX
+sudo systemctl start nginx
 ```
 
 > ### NGINX troubleshooting
-> `sudo cat /var/log/NGINX/error.log` to view logs
+> `sudo cat /var/log/nginx/error.log` to view logs
 
 In the AWS console, under your EC2 instance, click on your public IPV4 DNS address. If you see the NGINX welcome page, you’re on the right track and NGINX is working.
 
@@ -228,13 +228,13 @@ NGINX is a feature-rich webserver that can serve multiple websites/web-apps on o
 To see all server blocks of NGINX navigate to `/etc/NGINX/sites-available`
 
 ```
-cd /etc/NGINX/sites-available
+cd /etc/nginx/sites-available
 ```
 
 There should be all server blocks. On first time only one called `default` exist.
 
 ```
-/etc/NGINX/sites-available$ ls
+/etc/nginx/sites-available$ ls
 default
 ```
 
@@ -253,7 +253,7 @@ sudo cp -R /home/ubuntu/app/Frontend/build /var/www
 Configure `default` file:
 
 ```
-sudo vi /etc/NGINX/sites-available/default
+sudo vi /etc/nginx/sites-available/default
 ```
 
 Use the following configuration:
@@ -264,7 +264,7 @@ server {
     listen [::]:80 default_server;
     # We want the root folder to point at index.html
     root /var/www/build;
-    index index.html index.htm index.NGINX-debian.html;
+    index index.html index.htm index.nginx-debian.html;
 
     server_name _;
 
@@ -280,13 +280,13 @@ server {
 }
 ```
 
-Check the logs to see if there are any issues with NGINX - `sudo cat /var/log/NGINX/error.log`
+Check the logs to see if there are any issues with NGINX - `sudo cat /var/log/nginx/error.log`
 
 #### Explanation of the above file
 
 * `80` represents the HTTP port which NGINX listens for web traffic
 * `root` sets the directory for requests. In other words, usually your root file (index.html) should be in the folder. In this case, it is in our build folder for React.
-* `server_name` does not need to change, as there is only one server block. See [here](https://NGINX.org/en/docs/http/server_names.html) for more info.
+* `server_name` does not need to change, as there is only one server block. See [here](https://nginx.org/en/docs/http/server_names.html) for more info.
 * `location /` and `location /api` specifies the configuration based on a request URI. In this case, the latter means that all requests with a prefix of `/api` will go to the Node server.
 
 ### If you want to have more than one app
@@ -298,7 +298,7 @@ We will need to configure a new server block for every website. To do that let's
 Instead of creating a brand new file, copy the default config file and change it.
 
 ```
-cd /etc/NGINX/sites-available
+cd /etc/nginx/sites-available
 sudo cp default SERVER-BLOCK-NAME
 ```
 
@@ -316,7 +316,7 @@ server {
         # Note that we need to give a full path to the relevant folder.
         root /home/ubuntu/app/example-app/frontend/build;
 
-        index index.html index.htm index.NGINX-debian.html;
+        index index.html index.htm index.nginx-debian.html;
 
         server_name example.com www.example.com;
 
@@ -418,7 +418,7 @@ git pull https://github.com/example/example.git
 If you updated files in your frontend, you need to restart NGINX.
 
 ```
-sudo systemctl restart NGINX
+sudo systemctl restart nginx
 ```
 
 **Important: if you copied `build` folder on step 4, you must update the copy in the default PATH too:**
@@ -427,7 +427,7 @@ sudo systemctl restart NGINX
 cd /var/www
 sudo rm -r build
 sudo cp -R /home/ubuntu/app/Frontend/build /var/www
-sudo systemctl restart NGINX
+sudo systemctl restart nginx
 ```
 
 If you updated files in your backend, you need to restart pm2 service.
